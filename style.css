@@ -6,11 +6,13 @@
 }
 
 .container{
-    padding: 20px;
-    padding-left: 100px;
-    padding-right: 100px;
+    margin: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
 }
-
+.container h3{
+    padding: 12px;
+}
 .nav{
     display: flex;
     flex-flow: row wrap;
@@ -59,7 +61,102 @@
     width: 22px;
 }
 
+.main__new img{
+    width: 100%;
+}
 
+.carousel {
+    width: 100%; /* Adjust the width of the carousel container */
+    overflow: hidden;
+    position: relative;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
 
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
 
+.carousel-item {
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.main__sale{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+.main__sale a img{
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+}
+
+footer{
+    background-color: rgb(53, 50, 50);
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+    margin-top: 20px;
+}
+.img-payment{
+    margin-left: 230px;
+    margin-right: 230px;
+    padding: 15px;
+}
+.img-payment img{
+    width: 100%;
+    padding-bottom: 20px;
+}
+.input{
+    display: grid;
+    grid-template-columns: repeat(3,1fr); 
+    align-items: center;
+    margin-left: 230px;
+    margin-right: 230px;
+    font-size: 14px;
+    padding: 5px;
+    color: #03a9f4;
+}
+.title{
+    display: grid;
+    grid-template-columns: repeat(3,1fr); 
+    align-items: center;
+    margin-left: 230px;
+    margin-right: 230px;
+    padding-bottom: 5px;
+}
+.text2 li{
+    list-style: none;
+    padding: 5px;
+}
+.text2 a{
+    text-decoration: none;
+    font-size: 0.8vw;
+    color: #ffffff;
+}
+.text3{
+    font-size: 0.8vw;
+    color: #ffffff;
+}
+.text4 img{
+    display: flex;
+    width: 50%;
+    padding: 5px;
+}
+footer p{
+    padding-top: 10px;
+    margin-left: 230px;
+    margin-right: 230px;
+    color: rgb(148, 148, 148);
+}
 
