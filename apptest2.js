@@ -1,68 +1,33 @@
-let slideIndex = 0;
-
-function showSlides() {
-    let i;
-    let slides = document.getElementsByClassName("carousel-slide");
-    for (i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";  
-    }
-    slideIndex++;
-    if (slideIndex > slides.length) {slideIndex = 1}    
-    slides[slideIndex-1].style.display = "block";  
-    setTimeout(showSlides, 3500); // Change image every 3.5 seconds
-}
-
-document.addEventListener('DOMContentLoaded', showSlides);
-
-
-// JavaScript for search functionality
-function searchProducts() {
-    let input = document.getElementById('srcbar').value.toLowerCase();
-    let items = document.querySelectorAll('.item, .item--sell');
-
-    items.forEach(item => {
-        let itemName = item.querySelector('h4').innerText.toLowerCase();
-        if (itemName.includes(input)) {
-            item.style.display = '';  // แสดงผลิตภัณฑ์
-        } else {
-            item.style.display = 'none';  // ซ่อนผลิตภัณฑ์
-        }
-    });
-}
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    const cartIcon = document.getElementById('cart-icon');
-    const cartSidebar = document.getElementById('cart-sidebar');
-    const closeBtn = document.getElementById('close-btn');
-    const overlay = document.getElementById('overlay');
+document.addEventListener("DOMContentLoaded", () => {
+    const cart = [];
+    const cartSidebar = document.getElementById("cart-sidebar");
+    const overlay = document.getElementById("overlay");
+    const cartIcon = document.getElementById("cart-icon");
+    const closeBtn = document.getElementById("close-btn");
     const cartItemsContainer = document.getElementById("cart-items");
     const cartTotalPrice = document.getElementById("cart-total-price");
     const checkoutBtn = document.getElementById("checkout-btn");
-    const cartCount = document.getElementById("cart-count");
 
-    const cart = [];
+    cartIcon.addEventListener("click", () => {
+        cartSidebar.classList.add("open");
+        overlay.classList.add("open");
+    });
 
-    function showCart() {
-        cartSidebar.classList.add('open');
-        overlay.classList.add('open');
-    }
+    closeBtn.addEventListener("click", () => {
+        cartSidebar.classList.remove("open");
+        overlay.classList.remove("open");
+    });
 
-    function hideCart() {
-        cartSidebar.classList.remove('open');
-        overlay.classList.remove('open');
-    }
+    overlay.addEventListener("click", () => {
+        cartSidebar.classList.remove("open");
+        overlay.classList.remove("open");
+    });
 
-    cartIcon.addEventListener('click', showCart);
-    closeBtn.addEventListener('click', hideCart);
-    overlay.addEventListener('click', hideCart);
-
-
-    document.querySelectorAll(".item button, .item--sell button").forEach((button, i) => {
+    document.querySelectorAll(".item button").forEach((button, index) => {
         button.addEventListener("click", () => {
-            const item = document.querySelectorAll(".item, .item--sell")[i];
+            const item = document.querySelectorAll(".item")[index];
             const itemName = button.getAttribute("data-item-name");
-            const itemPrice = parseFloat(button.getAttribute("data-sell-price")) || parseFloat(button.getAttribute("data-item-price")); 
+            const itemPrice = parseFloat(button.getAttribute("data-item-price"));
             const itemQuantity = parseInt(item.querySelector("input[type='number']").value);
             const itemImageUrl = button.getAttribute("data-image-url");
 
@@ -86,15 +51,15 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             cart.push({ name, price, quantity, imageUrl });
         }
-        updateCartCount();
     }
 
     function updateCartDisplay() {
         cartItemsContainer.innerHTML = "";
+        let total = 0; // Initialize total to 0
+
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = "<p>No items in the cart.</p>";
         } else {
-            let total = 0;
             cart.forEach(item => {
                 const itemElement = document.createElement("div");
                 itemElement.classList.add("cart-item");
@@ -108,11 +73,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     <button class="remove-item">Remove</button>
                 `;
                 cartItemsContainer.appendChild(itemElement);
+
+                // Add event listener for remove button
                 itemElement.querySelector('.remove-item').addEventListener('click', () => {
                     removeFromCart(item.name);
                 });
 
-                total += item.price * item.quantity;
+                total += item.price * item.quantity; // Update total
             });
             cartTotalPrice.innerText = `฿${total.toFixed(2)}`;
         }
@@ -122,17 +89,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const itemIndex = cart.findIndex(item => item.name === name);
         if (itemIndex !== -1) {
             cart.splice(itemIndex, 1);
-            updateCartDisplay();
-            updateCartCount();
+            updateCartDisplay(); // Update cart display after removal
         }
         if (cart.length === 0) {
             cartTotalPrice.innerText = "฿0";
         }
-    }
-
-    function updateCartCount() {
-        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-        cartCount.innerText = totalItems;
     }
 
     checkoutBtn.addEventListener("click", () => {
@@ -143,17 +104,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonText: 'Close'
             });
         } else {
-            Swal.fire({
-                title: "Thank You For Purchase",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1500
-            })
-            cart.length = 0;
-            updateCartDisplay();
+            alert("Thank you for your purchase!");
+            cart.length = 0; // Clear cart
+            updateCartDisplay(); // Update cart display
             cartTotalPrice.innerText = "฿0";
-            hideCart();
-            updateCartCount();
+            cartSidebar.classList.remove("open");
+            overlay.classList.remove("open");
         }
     });
 });
+
+
