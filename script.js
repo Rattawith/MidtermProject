@@ -9,7 +9,7 @@ function showSlides() {
     slideIndex++;
     if (slideIndex > slides.length) {slideIndex = 1}    
     slides[slideIndex-1].style.display = "block";  
-    setTimeout(showSlides, 3500); // Change image every 3.5 seconds
+    setTimeout(showSlides, 3500); // ทำการเปลี่ยนรูปทุกๆ 3.5 วินาที
 }
 
 document.addEventListener('DOMContentLoaded', showSlides);
@@ -23,53 +23,63 @@ function searchProducts() {
     items.forEach(item => {
         let itemName = item.querySelector('h4').innerText.toLowerCase();
         if (itemName.includes(input)) {
-            item.style.display = '';  // แสดงผลิตภัณฑ์
+            item.style.display = '';  // แสดงสินค้า
         } else {
-            item.style.display = 'none';  // ซ่อนผลิตภัณฑ์
+            item.style.display = 'none';  // ซ่อนสินค้า
         }
     });
 }
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    const cartIcon = document.getElementById('cart-icon');
-    const cartSidebar = document.getElementById('cart-sidebar');
-    const closeBtn = document.getElementById('close-btn');
-    const overlay = document.getElementById('overlay');
-    const cartItemsContainer = document.getElementById("cart-items");
-    const cartTotalPrice = document.getElementById("cart-total-price");
-    const checkoutBtn = document.getElementById("checkout-btn");
-    const cartCount = document.getElementById("cart-count");
+    // เริ่มต้นเมื่อ DOM ถูกโหลดอย่างสมบูรณ์
 
-    const cart = [];
+    const cartIcon = document.getElementById('cart-icon'); // อ้างอิงไปยังไอคอนของตะกร้าสินค้า
+    const cartSidebar = document.getElementById('cart-sidebar'); // อ้างอิงไปยังแถบด้านข้างของตะกร้าสินค้า
+    const closeBtn = document.getElementById('close-btn'); // อ้างอิงไปยังปุ่มปิดแถบด้านข้าง
+    const overlay = document.getElementById('overlay'); // อ้างอิงไปยังชั้นโปร่งแสงที่อยู่ด้านหลังแถบด้านข้าง
+    const cartItemsContainer = document.getElementById("cart-items"); // อ้างอิงไปยังพื้นที่แสดงรายการสินค้าในตะกร้า
+    const cartTotalPrice = document.getElementById("cart-total-price"); // อ้างอิงไปยังพื้นที่แสดงราคารวมของสินค้าในตะกร้า
+    const checkoutBtn = document.getElementById("checkout-btn"); // อ้างอิงไปยังปุ่ม checkout
+    const cartCount = document.getElementById("cart-count"); // อ้างอิงไปยังตัวนับจำนวนสินค้าในตะกร้า
+
+    const cart = []; // สร้าง array เพื่อเก็บรายการสินค้าในตะกร้า
 
     function showCart() {
+        // ฟังก์ชันแสดงแถบด้านข้างของตะกร้าสินค้า
         cartSidebar.classList.add('open');
         overlay.classList.add('open');
     }
 
     function hideCart() {
+        // ฟังก์ชันซ่อนแถบด้านข้างของตะกร้าสินค้า
         cartSidebar.classList.remove('open');
         overlay.classList.remove('open');
     }
 
-    cartIcon.addEventListener('click', showCart);
-    closeBtn.addEventListener('click', hideCart);
-    overlay.addEventListener('click', hideCart);
-
+    cartIcon.addEventListener('click', showCart); // เพิ่ม event listener เพื่อแสดงแถบด้านข้างเมื่อคลิกไอคอนตะกร้า
+    closeBtn.addEventListener('click', hideCart); // เพิ่ม event listener เพื่อซ่อนแถบด้านข้างเมื่อคลิกปุ่มปิด
+    overlay.addEventListener('click', hideCart); // เพิ่ม event listener เพื่อซ่อนแถบด้านข้างเมื่อคลิกที่ overlay
 
     document.querySelectorAll(".item button, .item--sell button").forEach((button, i) => {
+        // เพิ่ม event listener ให้กับปุ่ม "Add to Cart" ของแต่ละสินค้า
+
         button.addEventListener("click", () => {
-            const item = document.querySelectorAll(".item, .item--sell")[i];
-            const itemName = button.getAttribute("data-item-name");
+            // เมื่อคลิกปุ่ม "Add to Cart" 
+
+            const item = document.querySelectorAll(".item, .item--sell")[i]; // ค้นหาสินค้าที่เกี่ยวข้อง
+            const itemName = button.getAttribute("data-item-name"); // ดึงชื่อสินค้าจาก attribute
             const itemPrice = parseFloat(button.getAttribute("data-sell-price")) || parseFloat(button.getAttribute("data-item-price")); 
-            const itemQuantity = parseInt(item.querySelector("input[type='number']").value);
-            const itemImageUrl = button.getAttribute("data-image-url");
+            // ดึงราคาสินค้า โดยเลือก sell-price ก่อน item-price
+            const itemQuantity = parseInt(item.querySelector("input[type='number']").value); // ดึงจำนวนสินค้าจาก input field
+            const itemImageUrl = button.getAttribute("data-image-url"); // ดึง URL ของรูปภาพสินค้าจาก attribute
 
             if (itemQuantity > 0) {
+                // หากจำนวนสินค้ามากกว่า 0 ให้เพิ่มสินค้าไปยังตะกร้า
                 addToCart(itemName, itemPrice, itemQuantity, itemImageUrl);
-                updateCartDisplay();
+                updateCartDisplay(); // อัปเดตการแสดงผลของตะกร้าสินค้า
             } else {
+                // หากจำนวนสินค้าไม่ถูกต้อง ให้แสดง alert
                 Swal.fire({
                     title: "Please enter a valid quantity",
                     icon: "question",
@@ -80,23 +90,27 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function addToCart(name, price, quantity, imageUrl) {
-        const existingItem = cart.find(item => item.name === name);
+        // ฟังก์ชันเพิ่มสินค้าไปยังตะกร้า
+        const existingItem = cart.find(item => item.name === name); // ตรวจสอบว่าสินค้านี้มีอยู่ในตะกร้าแล้วหรือไม่
         if (existingItem) {
-            existingItem.quantity += quantity;
+            existingItem.quantity += quantity; // ถ้ามีอยู่แล้ว ให้เพิ่มจำนวนสินค้า
         } else {
-            cart.push({ name, price, quantity, imageUrl });
+            cart.push({ name, price, quantity, imageUrl }); // ถ้าไม่มี ให้เพิ่มสินค้าลงในตะกร้า
         }
-        updateCartCount();
+        updateCartCount(); // อัปเดตตัวนับจำนวนสินค้าในตะกร้า
     }
 
     function updateCartDisplay() {
-        cartItemsContainer.innerHTML = "";
+        // ฟังก์ชันอัปเดตการแสดงผลของตะกร้าสินค้า
+        cartItemsContainer.innerHTML = ""; // ล้างเนื้อหาปัจจุบันของตะกร้า
         if (cart.length === 0) {
+            // ถ้าตะกร้าว่าง ให้แสดงข้อความบอกว่าไม่มีสินค้าในตะกร้า
             cartItemsContainer.innerHTML = "<p>No items in the cart.</p>";
         } else {
-            let total = 0;
+            let total = 0; // สร้างตัวแปรเก็บราคารวม
             cart.forEach(item => {
-                const itemElement = document.createElement("div");
+                // วนลูปเพื่อแสดงสินค้าทั้งหมดในตะกร้า
+                const itemElement = document.createElement("div"); // สร้าง div สำหรับสินค้าแต่ละชิ้น
                 itemElement.classList.add("cart-item");
                 itemElement.innerHTML = `
                     <img src="${item.imageUrl}" alt="${item.name}" class="cart-item-image" style="width: 50px; height: 50px;"/>
@@ -107,53 +121,59 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                     <button class="remove-item">Remove</button>
                 `;
-                cartItemsContainer.appendChild(itemElement);
+                cartItemsContainer.appendChild(itemElement); // เพิ่มสินค้าในตะกร้าลงใน container
                 itemElement.querySelector('.remove-item').addEventListener('click', () => {
-                    removeFromCart(item.name);
+                    removeFromCart(item.name); // เพิ่ม event listener ให้ปุ่มลบสินค้า
                 });
 
-                total += item.price * item.quantity;
+                total += item.price * item.quantity; // คำนวณราคารวม
             });
-            cartTotalPrice.innerText = `฿${total.toFixed(2)}`;
+            cartTotalPrice.innerText = `฿${total.toFixed(2)}`; // อัปเดตราคารวมในหน้าจอ
         }
     }
 
     function removeFromCart(name) {
-        const itemIndex = cart.findIndex(item => item.name === name);
+        // ฟังก์ชันลบสินค้าจากตะกร้า
+        const itemIndex = cart.findIndex(item => item.name === name); // ค้นหาสินค้าที่ต้องการลบ
         if (itemIndex !== -1) {
-            cart.splice(itemIndex, 1);
-            updateCartDisplay();
-            updateCartCount();
+            cart.splice(itemIndex, 1); // ลบสินค้าออกจากตะกร้า
+            updateCartDisplay(); // อัปเดตการแสดงผลของตะกร้า
+            updateCartCount(); // อัปเดตตัวนับจำนวนสินค้าในตะกร้า
         }
         if (cart.length === 0) {
-            cartTotalPrice.innerText = "฿0";
+            cartTotalPrice.innerText = "฿0"; // หากตะกร้าว่าง ให้ราคารวมเป็น 0
         }
     }
 
     function updateCartCount() {
-        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-        cartCount.innerText = totalItems;
+        // ฟังก์ชันอัปเดตตัวนับจำนวนสินค้าในตะกร้า
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0); // คำนวณจำนวนสินค้าทั้งหมดในตะกร้า
+        cartCount.innerText = totalItems; // อัปเดตตัวนับในหน้าจอ
     }
 
     checkoutBtn.addEventListener("click", () => {
+        // ฟังก์ชันการทำงานเมื่อกดปุ่ม checkout
         if (cart.length === 0) {
+            // ถ้าตะกร้าว่าง ให้แสดง alert
             Swal.fire({
                 title: "Your cart is empty.",
                 icon: "error",
                 confirmButtonText: 'Close'
             });
         } else {
+            // ถ้ามีสินค้าในตะกร้า ให้แสดงข้อความขอบคุณ และล้างตะกร้า
             Swal.fire({
                 title: "Thank You For Purchase",
                 icon: "success",
                 showConfirmButton: false,
                 timer: 1500
-            })
-            cart.length = 0;
-            updateCartDisplay();
-            cartTotalPrice.innerText = "฿0";
-            hideCart();
-            updateCartCount();
+            });
+            cart.length = 0; // ล้างรายการในตะกร้า
+            updateCartDisplay(); // อัปเดตการแสดงผล
+            cartTotalPrice.innerText = "฿0"; // ตั้งราคารวมเป็น 0
+            hideCart(); // ซ่อนแถบด้านข้าง
+            updateCartCount(); // อัปเดตตัวนับจำนวนสินค้าในตะกร้า
         }
     });
 });
+
