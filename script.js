@@ -81,7 +81,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
                     title: "Please enter a valid quantity",
                     icon: "question",
-                    confirmButtonText: 'Close'
+                    confirmButtonText: 'Close',
+                    confirmButtonColor: '#06b4e3',
                 });
             }
         });
@@ -156,7 +157,8 @@ document.addEventListener('DOMContentLoaded', function () {
             Swal.fire({
                 title: "Your cart is empty.",
                 icon: "error",
-                confirmButtonText: 'Close'
+                confirmButtonText: 'Close',
+                confirmButtonColor: '#f94622',
             });
         } else {
             // ถ้ามีสินค้าในตะกร้า ให้แสดงข้อความขอบคุณ และล้างตะกร้า
